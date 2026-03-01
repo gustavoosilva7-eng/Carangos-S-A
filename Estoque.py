@@ -12,6 +12,7 @@ def menu_estoque():
         print("4. Voltar ao menu principal")
         opcao_estoque = input("Escolha uma opção: ")
         os.system("cls")
+        
         match opcao_estoque:
             case '1':
                 cadastrar_produto()
@@ -20,8 +21,9 @@ def menu_estoque():
             case '3':
                 custos_estoque()
             case '4':
-                os.system("cls")
                 break
+            case _:
+                print("Opção inválida. Por favor, escolha uma opção válida.")
 
 def cadastrar_produto():
 
@@ -56,8 +58,9 @@ def custos_estoque():
     produto = pesquisar_produto()
     if produto:
         total_custo = produto["Quantidade"] * produto["Valor de Compra"]
-        print(f"Custo Semanal do estoque: R${total_custo:*7:.2f}")
+        print(f"Custo Semanal do estoque: R${total_custo*7:.2f}")
         print(f"Custo Mensal do estoque: R${total_custo*30:.2f}")
+        
         print(f"Custo Anual do estoque: R${total_custo*365:.2f}")
     else:
         print("Não foi possível calcular o custo do estoque.")

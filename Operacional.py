@@ -15,8 +15,8 @@ def producao():
         producao = int(input(f"Digite a produção do turno  para {dia}: "))
         print("Produção do turno registrada com sucesso.")
         calendario[dia] = producao
-    total = 0
-    media = 0
+    total=0
+    media=0
     input("Pressione Enter para continuar...")
     os.system("cls")
     print("Produção do Turno ")
