@@ -1,5 +1,5 @@
 import os; os.system("cls")
-import Operacional as o
+import Operacional.Operacional as o
 despesas = {
     "Água": 0,
     "Luz": 0,

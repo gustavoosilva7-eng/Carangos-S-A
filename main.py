@@ -1,6 +1,6 @@
-import Operacional as t
-import Estoque as e
-import Financeiro as f
+import Operacional.Operacional as t
+import Estoque.Estoque as e
+import Financeiro.Financeiro as f
 import os; os.system("cls")
 
 while True:
