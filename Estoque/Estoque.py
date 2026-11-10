@@ -1,4 +1,4 @@
-
+from database import conectar
 import os
 
 
@@ -31,19 +31,16 @@ def cadastrar_produto():
     nome = input("Digite o nome do produto: ")
     data_fabricacao = input("Digite a data de fabricação do produto (dd/mm/aaaa): ")
     fornecedor = input("Digite o nome do fornecedor do produto: ")
-    quantidade = int(input("Digite a quantidade do produto: "))
-    valor_compra = float(input("Digite o valor de compra do produto: "))
+    try:
+        quantidade = int(input("Digite a quantidade do produto: "))
+        valor_compra = float(input("Digite o valor de compra do produto: "))
+    except ValueError:
+        print("❌ Quantidade ou valor de compra inválidos.")
+        return
 
-    produtos[codigo] = {
-        "Codigo": codigo,
-        "Nome": nome,
-        "Data de Fabricação": data_fabricacao,
-        "Fornecedor": fornecedor,
-        "Quantidade": quantidade,
-        "Valor de Compra": valor_compra
-    }
+    # Chama a função ajustada para gravar no MySQL
+    salvar_produto(codigo, nome, data_fabricacao, fornecedor, quantidade, valor_compra)
 
-    print("Produto cadastrado com sucesso!")
 
 def pesquisar_produto():
     codigo = input("Digite o código do produto: ")
@@ -53,6 +50,7 @@ def pesquisar_produto():
             return produto
     print("Produto não encontrado.")
     return None
+
 def custos_estoque():
     total_custo = 0
     produto = pesquisar_produto()
@@ -64,3 +62,33 @@ def custos_estoque():
         print(f"Custo Anual do estoque: R${total_custo*365:.2f}")
     else:
         print("Não foi possível calcular o custo do estoque.")
+
+from datetime import datetime
+
+def salvar_produto(codigo, nome, data_fabricacao, fornecedor, quantidade, valor_compra):
+    try:
+        conexao = conectar()
+        cursor = conexao.cursor()
+        
+        # Converte a data de 'dd/mm/aaaa' para o formato do MySQL 'aaaa-mm-dd'
+        data_obj = datetime.strptime(data_fabricacao, "%d/%m/%Y").date()
+        
+        sql = """
+            INSERT INTO produtos (codigo, nome, data_fabricacao, fornecedor, quantidade, valor_compra) 
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        valores = (codigo, nome, data_obj, fornecedor, quantidade, valor_compra)
+        
+        cursor.execute(sql, valores)
+        conexao.commit()
+        print("✅ Produto salvo no MySQL com sucesso!")
+        
+    except Exception as err:
+        print(f"❌ Erro ao salvar produto no MySQL: {err}")
+        
+    finally:
+        # Garante que as conexões serão fechadas mesmo em caso de erro
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conexao' in locals() and conexao.is_connected():
+            conexao.close()
